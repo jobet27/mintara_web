@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Button } from "./Button";
+import { TrendingUp } from "lucide-react";
 
 /**
  * Mintara Professional and Advance Hero Components
@@ -140,19 +141,10 @@ export const AdvanceHero: React.FC<HeroProps> = ({
               <div className="relative bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10 p-8 rounded-[2rem] shadow-2xl overflow-hidden group">
                 <div className="aspect-square bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl flex items-center justify-center relative overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]">
                   <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
-                  <svg
+                  <TrendingUp
                     className="w-32 h-32 text-emerald-600 dark:text-emerald-400 transition-transform duration-700 group-hover:rotate-12"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                    />
-                  </svg>
+                    strokeWidth={1.5}
+                  />
                   <div className="absolute bottom-8 left-8 right-8 h-24 bg-white/60 dark:bg-zinc-900/40 backdrop-blur-lg rounded-xl border border-white/20 p-4 shadow-lg transition-all duration-300 group-hover:-translate-y-2">
                     <div className="flex gap-2 items-center mb-2">
                       <div className="h-2 w-2 rounded-full bg-emerald-500" />
