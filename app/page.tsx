@@ -1,76 +1,116 @@
-import Image from "next/image";
-import { Button } from "@/components/Button";
+import { AdvanceHero } from "@/components/Hero";
+import { AdvanceFeatures, FeatureItem } from "@/components/Features";
+import { AdvanceSolutions, SolutionItem } from "@/components/Solutions";
+import { AdvanceCTA } from "@/components/CTA";
+import { Footer } from "@/components/Footer";
+import {
+  Zap,
+  Globe,
+  Fingerprint,
+  PieChart,
+  Rocket,
+  GraduationCap,
+  Coins,
+} from "lucide-react";
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row mt-8">
-          <Button variant="professional">Professional Login</Button>
-          <Button variant="advance" size="lg">
-            Invest Now
-          </Button>
-          <Button variant="outline" isLoading>
-            Processing...
-          </Button>
-        </div>
+  const advanceFeaturesItems: FeatureItem[] = [
+    {
+      icon: <Zap className="h-full w-full" />,
+      title: "AI Savings Optimizer",
+      description:
+        "Our machine learning algorithms identify patterns in your spending to maximize your monthly savings automatically.",
+      span: "large",
+    },
+    {
+      icon: <Globe strokeWidth={1.5} />,
+      title: "Finance Pulse",
+      description: "Real-time tracking of subscription costs.",
+      span: "normal",
+    },
+    {
+      icon: <Fingerprint strokeWidth={1.5} />,
+      title: "Smart Insights",
+      description: "Personalized financial health reports.",
+      span: "normal",
+    },
+    {
+      icon: <PieChart strokeWidth={1.5} />,
+      title: "Daily Expense Tracking",
+      description:
+        "Automatically categorize and track every transaction across all connected accounts.",
+      span: "wide",
+    },
+  ];
 
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+  const advanceSolutionsItems: SolutionItem[] = [
+    {
+      icon: <Rocket strokeWidth={1.5} />,
+      title: "Startup Growth",
+      description:
+        "Dynamic budgeting for entrepreneurs scaling their business and personal wealth.",
+      persona: "Entrepreneurs",
+    },
+    {
+      icon: <GraduationCap strokeWidth={1.5} />,
+      title: "Modern Education",
+      description:
+        "Innovative AI savings tools for students managing tuition and lifestyle costs.",
+      persona: "Students",
+    },
+    {
+      icon: <Coins strokeWidth={1.5} />,
+      title: "Dynamic Investing",
+      description:
+        "Real-time budgeting insights for the modern, tech-forward investor.",
+      persona: "Investors",
+    },
+  ];
+
+  return (
+    <div className="flex flex-col gap-0 w-full min-h-screen">
+      {/* Advance Hero Showcase (Leading with the Dynamic/Growth variant) */}
+      <AdvanceHero
+        badge="Trusted by over 50,000 users"
+        title={
+          <>
+            Budgeting{" "}
+            <span className="text-emerald-600 dark:text-emerald-400">
+              Reimagined.
+            </span>
+          </>
+        }
+        description="Take control of your budget with Mintara. Start building your financial legacy today with our advanced budgeting tools and real-time spending insights."
+        image="/images/hero_dashboard.png"
+        primaryCtaText="Start Planning"
+        secondaryCtaText="See Pricing"
+      />
+
+      <AdvanceFeatures
+        badge="Innovative Intelligence"
+        title="Modern Budgeting Tools"
+        subtitle="Experience the future of personal finance with our dynamic insights and savings-focused features."
+        items={advanceFeaturesItems}
+      />
+
+      {/* Solutions Section (Persona-based) */}
+      <AdvanceSolutions
+        badge="Tailored for You"
+        title="Solutions for Every Stage"
+        subtitle="Whether you're just starting out or managing a family empire, Mintara has the tools you need."
+        items={advanceSolutionsItems}
+      />
+
+      {/* Advance CTA Section (Conversion) */}
+      <AdvanceCTA
+        title="Ready to Master Your Budget?"
+        description="Join thousands of planners who have already transformed their financial lives with Mintara's Advance tools."
+        primaryText="Get Started Now"
+        secondaryText="View Plan Details"
+      />
+
+      {/* Global Footer */}
+      <Footer />
     </div>
   );
 }

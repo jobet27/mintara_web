@@ -1,5 +1,6 @@
 import React from "react";
 import RootLayout from "../layout";
+import { Navbar } from "../../components/Navbar";
 
 // Mock child component for structural testing
 const MockChild = () => <div data-testid="child-element">Test Content</div>;
@@ -44,8 +45,20 @@ describe("Root Layout (Structural)", () => {
     expect(bodyElement.props.className).toContain("min-h-full");
     expect(bodyElement.props.className).toContain("flex-col");
 
-    // 3. Verify Child Injection
-    // The children passed to RootLayout should be rendered exactly inside the body
-    expect(bodyElement.props.children).toBe(testChildren);
+    // 3. Verify Body Children Structure
+    // The body should have two children: [Navbar, main]
+    const bodyChildren = bodyElement.props
+      .children as React.ReactElement<PropsWithNestedClass>[];
+    expect(bodyChildren).toHaveLength(2);
+
+    // 3.1 Verify Navbar component is present
+    const navbarElement = bodyChildren[0];
+    expect(navbarElement.type).toBe(Navbar);
+
+    // 3.2 Verify main tag and child injection
+    const mainElement = bodyChildren[1];
+    expect(mainElement.type).toBe("main");
+    expect(mainElement.props.className).toContain("flex-col");
+    expect(mainElement.props.children).toBe(testChildren);
   });
 });
