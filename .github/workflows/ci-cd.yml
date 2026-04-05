@@ -15,7 +15,7 @@ on:
       - master
 
 env:
-  DOCKERHUB_REPO: jobet/mintara-web
+  DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/mintara-web
   NODE_VERSION: "20"
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
