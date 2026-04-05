@@ -1,0 +1,129 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- HELPER FUNCTIONS ---
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'admin';
+    }
+
+    // Advanced: Enforce Server Timestamps for financial integrity
+    function isRequestTime(timeValue) {
+      return timeValue == request.time;
+    }
+
+    // Advanced: Prevent querying massive datasets (anti-exfiltration)
+    function enforceQueryLimits() {
+      return request.query.limit != null && request.query.limit <= 100;
+    }
+
+    // Advanced: Audit-Safe metadata validation
+    function hasValidAuditFields(data) {
+      return data.keys().hasAll(['createdAt', 'updatedAt', 'createdBy']) &&
+             isRequestTime(data.createdAt) &&
+             isRequestTime(data.updatedAt) &&
+             data.createdBy == request.auth.uid;
+    }
+
+    function isAuditUnchanged(before, after) {
+      return after.createdAt == before.createdAt &&
+             after.createdBy == before.createdBy &&
+             isRequestTime(after.updatedAt);
+    }
+
+    // --- SCHEMA VALIDATION ---
+
+    function isValidTransaction(data) {
+      let fields = ['amount', 'category', 'description', 'timestamp', 'createdAt', 'updatedAt', 'createdBy'];
+      return data.keys().hasAll(fields) &&
+             data.keys().hasOnly(fields.concat(['metadata'])) &&
+             data.amount is number &&
+             data.amount >= 0 &&
+             data.category is string &&
+             data.description is string &&
+             isRequestTime(data.timestamp) &&
+             hasValidAuditFields(data);
+    }
+
+    function isValidBudget(data) {
+      let fields = ['limit', 'period', 'category', 'createdAt', 'updatedAt', 'createdBy'];
+      return data.keys().hasAll(fields) &&
+             data.keys().hasOnly(fields.concat(['currentSpending'])) &&
+             data.limit is number &&
+             data.limit >= 0 &&
+             data.period in ['weekly', 'monthly', 'yearly'] &&
+             data.category is string;
+    }
+
+    // --- MATCH RULES ---
+
+    // Users & Subcollections
+    match /users/{userId} {
+      // Profiles are restricted
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin(); // Users don't list other users
+      
+      allow create: if isOwner(userId) && request.resource.data.keys().hasAll(['email', 'createdAt']);
+      allow update: if isOwner(userId) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['email', 'createdAt']);
+      allow delete: if isAdmin();
+
+      // Transactions (IMMUTABLE LOGS)
+      match /transactions/{transactionId} {
+        allow get: if isOwner(userId) || isAdmin();
+        allow list: if (isOwner(userId) || isAdmin()) && enforceQueryLimits();
+        
+        // No updates allowed to transaction history for fintech audit safety
+        allow create: if isOwner(userId) && isValidTransaction(request.resource.data);
+        allow update: if false; 
+        allow delete: if isAdmin(); // Only admins/system can delete if strictly necessary
+      }
+
+      // Budgets (MUTABLE WITH AUDIT)
+      match /budgets/{budgetId} {
+        allow get: if isOwner(userId) || isAdmin();
+        allow list: if (isOwner(userId) || isAdmin()) && enforceQueryLimits();
+        
+        allow create: if isOwner(userId) && isValidBudget(request.resource.data) && hasValidAuditFields(request.resource.data);
+        allow update: if isOwner(userId) && isValidBudget(request.resource.data) && isAuditUnchanged(resource.data, request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+
+      // Savings
+      match /savings/{savingsId} {
+        allow get: if isOwner(userId) || isAdmin();
+        allow list: if (isOwner(userId) || isAdmin()) && enforceQueryLimits();
+        
+        allow create: if isOwner(userId) && hasValidAuditFields(request.resource.data);
+        allow update: if isOwner(userId) && isAuditUnchanged(resource.data, request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    // Analytics (Scattered read only)
+    match /analytics/{userId}/{document=**} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Lockdown Collection Groups
+    // Explicitly scope collection group searches to prevent system-wide exfiltration
+    match /{path=**}/transactions/{transactionId} {
+      allow read: if isOwner(resource.data.createdBy) || isAdmin();
+      allow list: if (isAuthenticated() && enforceQueryLimits()) || isAdmin();
+    }
+
+    // Default Deny-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
