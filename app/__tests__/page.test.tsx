@@ -6,7 +6,7 @@ describe("Home Page", () => {
     render(<Home />);
 
     const heading = screen.getByRole("heading", {
-      name: /to get started, edit the page\.tsx file\./i,
+      name: /welcome to mintara/i,
     });
 
     expect(heading).toBeInTheDocument();
@@ -27,17 +27,6 @@ describe("Home Page", () => {
     expect(docLink).toHaveAttribute(
       "href",
       expect.stringContaining("nextjs.org/docs"),
-    );
-  });
-
-  it("contains the deploy now link", () => {
-    render(<Home />);
-
-    const deployLink = screen.getByRole("link", { name: /deploy now/i });
-    expect(deployLink).toBeInTheDocument();
-    expect(deployLink).toHaveAttribute(
-      "href",
-      expect.stringContaining("vercel.com/new"),
     );
   });
 });
