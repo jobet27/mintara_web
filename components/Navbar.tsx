@@ -89,9 +89,6 @@ export const Navbar: React.FC = () => {
 
           {/* Desktop Actions Section */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="professional" size="sm">
-              Login
-            </Button>
             <Button variant="advance" size="sm">
               Get Started
             </Button>
@@ -159,10 +156,7 @@ export const Navbar: React.FC = () => {
               {item.label}
             </Link>
           ))}
-          <div className="grid grid-cols-2 gap-4 mt-4 px-3 pb-2">
-            <Button variant="professional" fullWidth>
-              Login
-            </Button>
+          <div className="grid grid-cols-1 gap-4 mt-4 px-3 pb-2">
             <Button variant="advance" fullWidth>
               Get Started
             </Button>

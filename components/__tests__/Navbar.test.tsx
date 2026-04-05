@@ -22,16 +22,13 @@ describe("Navbar Component", () => {
     expect(screen.getAllByText("Company")[0]).toBeVisible();
   });
 
-  it("renders action buttons in desktop view", () => {
+  it("renders action buttons in desktop and mobile views", () => {
     render(<Navbar />);
-    // There are two "Login" and "Get Started" buttons (Desktop and Mobile)
-    // We check that Desktop buttons exist
-    const loginButtons = screen.getAllByRole("button", { name: /login/i });
+    // There are two "Get Started" buttons (Desktop and Mobile)
     const getStartedButtons = screen.getAllByRole("button", {
       name: /get started/i,
     });
 
-    expect(loginButtons).toHaveLength(2);
     expect(getStartedButtons).toHaveLength(2);
   });
 
