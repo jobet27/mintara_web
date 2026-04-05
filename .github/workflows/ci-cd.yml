@@ -1,0 +1,175 @@
+name: Professional CI/CD Pipeline v2.0
+
+on:
+  push:
+    branches:
+      - development
+      - qa
+      - uat
+      - master
+  pull_request:
+    branches:
+      - development
+      - qa
+      - uat
+      - master
+
+env:
+  DOCKERHUB_REPO: jobet/mintara-web
+  NODE_VERSION: "20"
+
+jobs:
+  # --- STAGE 0: SETUP dependencies ---
+  setup:
+    name: Setup Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+
+  # --- STAGE 1: VALIDATE (Parallel) ---
+  lint:
+    name: Linting
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+      - run: npm ci # Uses cache
+      - run: npm run lint
+
+  test:
+    name: Unit Testing
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+      - run: npm ci # Uses cache
+      - run: npm run test:coverage
+      - name: Upload Coverage Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage
+          path: coverage/
+
+  type-check:
+    name: Type Checking
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+      - run: npm ci # Uses cache
+      - run: npm run type-check
+
+  # --- STAGE 2: SECURITY ---
+  security-scan:
+    name: Security Scan
+    needs: [lint, test, type-check]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Trivy vulnerability scanner (Repo)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          ignore-unfixed: true
+          format: "table"
+          exit-code: "1"
+          severity: "CRITICAL,HIGH"
+
+  # --- STAGE 3: BUILD & PUSH DOCKER ---
+  docker-build-push:
+    name: Docker Build & Push
+    needs: security-scan
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Determine Tag
+        id: tag
+        run: |
+          case "${{ github.ref_name }}" in
+            master)      echo "tag=latest" >> $GITHUB_OUTPUT ;;
+            uat)         echo "tag=uat"    >> $GITHUB_OUTPUT ;;
+            qa)          echo "tag=qa"     >> $GITHUB_OUTPUT ;;
+            development) echo "tag=dev"    >> $GITHUB_OUTPUT ;;
+            *)           echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT ;;
+          esac
+
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_REPO }}:${{ steps.tag.outputs.tag }}
+            ${{ env.DOCKERHUB_REPO }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # --- STAGE 4: DEPLOY ---
+  deploy-vercel:
+    name: Deploy to Vercel
+    needs: docker-build-push
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Setup Vercel Link
+        run: |
+          mkdir .vercel
+          echo "{\"projectId\":\"${{ secrets.VERCEL_PROJECT_ID }}\",\"orgId\":\"${{ secrets.VERCEL_ORD_ID }}\"}" > .vercel/project.json
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        if: github.ref_name != 'master'
+
+      - name: Pull Vercel Environment Information (Production)
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        if: github.ref_name == 'master'
+
+      - name: Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        if: github.ref_name != 'master'
+
+      - name: Build Project Artifacts (Production)
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        if: github.ref_name == 'master'
+
+      - name: Deploy Project Artifacts
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        if: github.ref_name != 'master'
+
+      - name: Deploy Project Artifacts (Production)
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        if: github.ref_name == 'master'

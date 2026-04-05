@@ -18,6 +18,14 @@ const config: Config = {
     "!**/*.d.ts",
     "!**/node_modules/**",
   ],
+  coverageThreshold: {
+    global: {
+      branches: 75,
+      functions: 75,
+      lines: 75,
+      statements: 75,
+    },
+  },
   // Add more setup options before each test is run
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   moduleNameMapper: {
