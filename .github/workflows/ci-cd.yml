@@ -103,6 +103,31 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Create Docker Hub Repository
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          REPO_NAME=$(echo "${{ env.DOCKERHUB_REPO }}" | cut -d'/' -f2)
+          echo "Checking/Creating repository: $REPO_NAME"
+
+          # 1. Get Authentication Token
+          TOKEN=$(curl -s -H "Content-Type: application/json" -X POST \
+            -d "{\"username\": \"$DOCKERHUB_USERNAME\", \"password\": \"$DOCKERHUB_TOKEN\"}" \
+            https://hub.docker.com/v2/users/login/ | jq -r .token)
+
+          if [ "$TOKEN" == "null" ]; then
+            echo "Failed to authenticate with Docker Hub. Please check your DOCKERHUB_TOKEN."
+            exit 1
+          fi
+
+          # 2. Attempt to Create the Repository (will fail if exists, which is fine)
+          curl -s -H "Authorization: JWT $TOKEN" \
+            -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"name\": \"$REPO_NAME\", \"is_private\": false}" \
+            https://hub.docker.com/v2/repositories/$DOCKERHUB_USERNAME/ || echo "Repository might already exist or creation failed."
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
