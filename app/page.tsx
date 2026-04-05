@@ -1,43 +1,19 @@
-import Image from "next/image";
-import { ProfessionalHero, AdvanceHero } from "@/components/Hero";
+import { AdvanceHero } from "@/components/Hero";
+import { AdvanceFeatures, FeatureItem } from "@/components/Features";
+import { AdvanceSolutions, SolutionItem } from "@/components/Solutions";
+import { AdvanceCTA } from "@/components/CTA";
+import { Footer } from "@/components/Footer";
 import {
-  ProfessionalFeatures,
-  AdvanceFeatures,
-  FeatureItem,
-} from "@/components/Features";
-import {
-  ShieldCheck,
-  LayoutDashboard,
   PieChart,
   Zap,
   Globe,
   Fingerprint,
+  GraduationCap,
+  Rocket,
+  Coins,
 } from "lucide-react";
 
 export default function Home() {
-  const professionalFeaturesItems: FeatureItem[] = [
-    {
-      icon: <ShieldCheck strokeWidth={2} />,
-      title: "Secure Savings",
-      description:
-        "Secure your financial future with enterprise-grade encryption and multi-layer savings protection.",
-      link: "#security",
-    },
-    {
-      icon: <LayoutDashboard strokeWidth={2} />,
-      title: "Real-time Budgeting",
-      description:
-        "Track every penny across multiple accounts with absolute precision and authoritative data.",
-    },
-    {
-      icon: <PieChart strokeWidth={2} />,
-      title: "Budget Analysis",
-      description:
-        "Comprehensive personal finance reports and data analysis to help you make informed spending decisions.",
-      link: "#analysis",
-    },
-  ];
-
   const advanceFeaturesItems: FeatureItem[] = [
     {
       icon: <Zap strokeWidth={1.5} />,
@@ -67,6 +43,30 @@ export default function Home() {
     },
   ];
 
+  const advanceSolutionsItems: SolutionItem[] = [
+    {
+      icon: <Rocket strokeWidth={1.5} />,
+      title: "Startup Growth",
+      description:
+        "Dynamic budgeting for entrepreneurs scaling their business and personal wealth.",
+      persona: "Entrepreneurs",
+    },
+    {
+      icon: <GraduationCap strokeWidth={1.5} />,
+      title: "Modern Education",
+      description:
+        "Innovative AI savings tools for students managing tuition and lifestyle costs.",
+      persona: "Students",
+    },
+    {
+      icon: <Coins strokeWidth={1.5} />,
+      title: "Dynamic Investing",
+      description:
+        "Real-time budgeting insights for the modern, tech-forward investor.",
+      persona: "Investors",
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-0 w-full min-h-screen">
       {/* Advance Hero Showcase (Leading with the Dynamic/Growth variant) */}
@@ -93,57 +93,24 @@ export default function Home() {
         items={advanceFeaturesItems}
       />
 
-      {/* Professional Hero Showcase (High-trust, Authority variant) */}
-      <ProfessionalHero
-        badge="Enterprise Stability"
-        title="Master Your Budget with Precision"
-        description="A minimalist, high-authority budgeting tool designed for professionals. Secure your future with Mintara's enterprise-grade personal finance management."
-        primaryCtaText="Professional Login"
-        secondaryCtaText="Contact Sales"
-        className="border-t border-zinc-100 dark:border-zinc-900"
+      {/* Advance Solutions Section */}
+      <AdvanceSolutions
+        badge="Tailored Innovations"
+        title="Solutions for Your Lifestyle"
+        subtitle="Experience specialized budgeting tools designed for the modern, innovative career and lifestyle."
+        items={advanceSolutionsItems}
       />
 
-      {/* Professional Features Section */}
-      <ProfessionalFeatures
-        badge="Foundational Reliability"
-        title="Authoritative Budget Tracking"
-        subtitle="Stability and absolute precision when managing your daily expenses and long-term budget targets."
-        items={professionalFeaturesItems}
+      {/* Advance CTA Section (Conversion) */}
+      <AdvanceCTA
+        title="Ready to Master Your Budget?"
+        description="Join thousands of planners who have already transformed their financial lives with Mintara's Advance tools."
+        primaryText="Get Started Now"
+        secondaryText="View Plan Details"
       />
 
-      <div className="mx-auto max-w-7xl px-8 pb-20 pt-10">
-        <div className="flex flex-col gap-6 w-full pt-8 border-t border-zinc-100 dark:border-zinc-900 sm:flex-row items-center justify-between">
-          <Image
-            className="dark:invert mb-4 sm:mb-0"
-            src="/next.svg"
-            alt="Next.js logo"
-            width={100}
-            height={20}
-            priority
-          />
-          <a
-            className="flex h-12 items-center gap-2 font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
-            href="https://nextjs.org/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M14 5l7 7m0 0l-7 7m7-7H3"
-              />
-            </svg>
-          </a>
-        </div>
-      </div>
+      {/* Global Footer */}
+      <Footer />
     </div>
   );
 }
