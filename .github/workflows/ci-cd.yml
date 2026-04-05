@@ -1,4 +1,4 @@
-name: Professional CI/CD Pipeline
+name: Professional CI/CD Pipeline v2.0
 
 on:
   push:
@@ -19,9 +19,9 @@ env:
   NODE_VERSION: "20"
 
 jobs:
-  # --- STAGE 1: VALIDATE ---
-  lint:
-    name: Linting
+  # --- STAGE 0: SETUP dependencies ---
+  setup:
+    name: Setup Dependencies
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,11 +29,26 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
+
+  # --- STAGE 1: VALIDATE (Parallel) ---
+  lint:
+    name: Linting
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+      - run: npm ci # Uses cache
       - run: npm run lint
 
   test:
     name: Unit Testing
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,11 +56,17 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-      - run: npm ci
-      - run: npm run test:ci
+      - run: npm ci # Uses cache
+      - run: npm run test:coverage
+      - name: Upload Coverage Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage
+          path: coverage/
 
   type-check:
     name: Type Checking
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,7 +74,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-      - run: npm ci
+      - run: npm ci # Uses cache
       - run: npm run type-check
 
   # --- STAGE 2: SECURITY ---
@@ -123,6 +144,11 @@ jobs:
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
+
+      - name: Setup Vercel Link
+        run: |
+          mkdir .vercel
+          echo "{\"projectId\":\"${{ secrets.VERCEL_PROJECT_ID }}\",\"orgId\":\"${{ secrets.VERCEL_ORD_ID }}\"}" > .vercel/project.json
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
