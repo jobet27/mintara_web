@@ -158,7 +158,9 @@ export const AdvanceFeatures: React.FC<FeaturesProps> = ({
 
                 <div className="relative">
                   <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 text-white flex items-center justify-center mb-8 shadow-xl shadow-emerald-500/10 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110">
-                    <div className="scale-125">{item.icon}</div>
+                    <div className="h-8 w-8 flex items-center justify-center">
+                      {item.icon}
+                    </div>
                   </div>
 
                   <h3

@@ -1,6 +1,4 @@
-"use client";
-
-import React from "react";
+import Image from "next/image";
 import { Button } from "./Button";
 import { TrendingUp } from "lucide-react";
 
@@ -14,6 +12,8 @@ interface HeroProps {
   badge?: string;
   title: React.ReactNode;
   description: string;
+  icon?: React.ReactNode;
+  image?: string;
   primaryCtaText: string;
   secondaryCtaText?: string;
   onPrimaryClick?: () => void;
@@ -89,6 +89,8 @@ export const AdvanceHero: React.FC<HeroProps> = ({
   badge,
   title,
   description,
+  icon,
+  image,
   primaryCtaText,
   secondaryCtaText,
   onPrimaryClick,
@@ -138,20 +140,29 @@ export const AdvanceHero: React.FC<HeroProps> = ({
           <div className="mt-16 lg:mt-0 lg:col-span-5 xl:col-span-6 relative">
             <div className="relative mx-auto max-w-md lg:max-w-none">
               <div className="absolute -inset-4 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 blur-2xl rounded-[3rem] animate-pulse pointer-events-none" />
-              <div className="relative bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10 p-8 rounded-[2rem] shadow-2xl overflow-hidden group">
-                <div className="aspect-square bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl flex items-center justify-center relative overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]">
+              <div className="relative bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-[2rem] shadow-2xl overflow-hidden group">
+                <div className="aspect-square bg-gradient-to-br from-emerald-500/10 to-teal-500/10 flex items-center justify-center relative overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]">
                   <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
-                  <TrendingUp
-                    className="w-32 h-32 text-emerald-600 dark:text-emerald-400 transition-transform duration-700 group-hover:rotate-12"
-                    strokeWidth={1.5}
-                  />
-                  <div className="absolute bottom-8 left-8 right-8 h-24 bg-white/60 dark:bg-zinc-900/40 backdrop-blur-lg rounded-xl border border-white/20 p-4 shadow-lg transition-all duration-300 group-hover:-translate-y-2">
-                    <div className="flex gap-2 items-center mb-2">
-                      <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                      <div className="h-2 w-12 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+                  {image ? (
+                    <Image
+                      src={image}
+                      alt={
+                        typeof title === "string" ? title : "Dashboard preview"
+                      }
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      priority
+                    />
+                  ) : (
+                    <div className="w-32 h-32 text-emerald-600 dark:text-emerald-400 transition-transform duration-700 group-hover:rotate-12 flex items-center justify-center">
+                      {icon || (
+                        <TrendingUp
+                          className="w-full h-full"
+                          strokeWidth={1.5}
+                        />
+                      )}
                     </div>
-                    <div className="h-4 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800/50" />
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

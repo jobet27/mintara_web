@@ -99,5 +99,52 @@ describe("Hero Components", () => {
       expect(queryByText("New Feature")).not.toBeInTheDocument();
       expect(queryByText("Learn More")).not.toBeInTheDocument();
     });
+
+    it("renders with an image and string title for alt coverage", () => {
+      render(
+        <AdvanceHero
+          {...mockProps}
+          title="String Title"
+          image="/test-hero.png"
+        />,
+      );
+
+      const img = screen.getByAltText("String Title");
+      expect(img).toBeInTheDocument();
+    });
+
+    it("renders with an image when provided and handles ReactNode titles for alt", () => {
+      render(
+        <AdvanceHero
+          {...mockProps}
+          title={<span>ReactNode Title</span>}
+          image="/test-hero.png"
+        />,
+      );
+
+      const img = screen.getByAltText("Dashboard preview");
+      expect(img).toBeInTheDocument();
+      expect(img).toHaveAttribute("src");
+    });
+
+    it("renders with a custom icon when provided and no image", () => {
+      render(
+        <AdvanceHero
+          {...mockProps}
+          icon={<div data-testid="custom-icon" />}
+          image={undefined}
+        />,
+      );
+      expect(screen.getByTestId("custom-icon")).toBeInTheDocument();
+    });
+
+    it("renders with default trending up icon when no image or icon provided", () => {
+      const { container } = render(
+        <AdvanceHero {...mockProps} icon={undefined} image={undefined} />,
+      );
+      // The default icon is TrendingUp which renders an svg
+      const svg = container.querySelector("svg");
+      expect(svg).toBeInTheDocument();
+    });
   });
 });

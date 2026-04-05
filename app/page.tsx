@@ -4,19 +4,19 @@ import { AdvanceSolutions, SolutionItem } from "@/components/Solutions";
 import { AdvanceCTA } from "@/components/CTA";
 import { Footer } from "@/components/Footer";
 import {
-  PieChart,
   Zap,
   Globe,
   Fingerprint,
-  GraduationCap,
+  PieChart,
   Rocket,
+  GraduationCap,
   Coins,
 } from "lucide-react";
 
 export default function Home() {
   const advanceFeaturesItems: FeatureItem[] = [
     {
-      icon: <Zap strokeWidth={1.5} />,
+      icon: <Zap className="h-full w-full" />,
       title: "AI Savings Optimizer",
       description:
         "Our machine learning algorithms identify patterns in your spending to maximize your monthly savings automatically.",
@@ -81,11 +81,11 @@ export default function Home() {
           </>
         }
         description="Take control of your budget with Mintara. Start building your financial legacy today with our advanced budgeting tools and real-time spending insights."
+        image="/images/hero_dashboard.png"
         primaryCtaText="Start Planning"
         secondaryCtaText="See Pricing"
       />
 
-      {/* Advance Features Section */}
       <AdvanceFeatures
         badge="Innovative Intelligence"
         title="Modern Budgeting Tools"
@@ -93,11 +93,11 @@ export default function Home() {
         items={advanceFeaturesItems}
       />
 
-      {/* Advance Solutions Section */}
+      {/* Solutions Section (Persona-based) */}
       <AdvanceSolutions
-        badge="Tailored Innovations"
-        title="Solutions for Your Lifestyle"
-        subtitle="Experience specialized budgeting tools designed for the modern, innovative career and lifestyle."
+        badge="Tailored for You"
+        title="Solutions for Every Stage"
+        subtitle="Whether you're just starting out or managing a family empire, Mintara has the tools you need."
         items={advanceSolutionsItems}
       />
 

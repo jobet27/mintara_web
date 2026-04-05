@@ -21,7 +21,7 @@ describe("Home Page", () => {
       screen.getByRole("heading", { name: /modern budgeting tools/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: /solutions for your lifestyle/i }),
+      screen.getByRole("heading", { name: /solutions for every stage/i }),
     ).toBeInTheDocument();
 
     // Global Footer

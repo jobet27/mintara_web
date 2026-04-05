@@ -60,7 +60,9 @@ export const ProfessionalSolutions: React.FC<SolutionsProps> = ({
                 className="group relative flex flex-col items-start p-8 rounded-2xl bg-zinc-50 border border-zinc-100 dark:bg-zinc-900/50 dark:border-zinc-800 transition-all duration-300 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-xl"
               >
                 <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-lg group-hover:scale-110 transition-transform">
-                  <div className="h-6 w-6">{item.icon}</div>
+                  <div className="h-6 w-6 flex items-center justify-center">
+                    {item.icon}
+                  </div>
                 </div>
                 <span className="mb-2 text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
                   {item.persona}
@@ -126,8 +128,10 @@ export const AdvanceSolutions: React.FC<SolutionsProps> = ({
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                 <div className="relative rounded-[2.25rem] bg-zinc-50 dark:bg-zinc-950 p-8 h-full flex flex-col">
-                  <div className="mb-8 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-xl shadow-emerald-500/20 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110">
-                    <div className="h-7 w-7">{item.icon}</div>
+                  <div className="mb-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-xl shadow-emerald-500/20 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110">
+                    <div className="h-8 w-8 flex items-center justify-center">
+                      {item.icon}
+                    </div>
                   </div>
                   <span className="mb-3 text-sm font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
                     {item.persona}

@@ -17,10 +17,10 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Features", href: "#features" },
-  { label: "Solutions", href: "#solutions" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Company", href: "#company" },
+  { label: "Features", href: "/features" },
+  { label: "Solutions", href: "/solutions" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Company", href: "/company" },
 ];
 
 export const Navbar: React.FC = () => {
