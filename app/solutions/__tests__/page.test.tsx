@@ -20,7 +20,7 @@ describe("Solutions Page", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /mintara's advance platform adapts with clinical precision to your life stage/i,
+        /mintara's advance platform adapts with clinical precision/i,
       ),
     ).toBeInTheDocument();
 
