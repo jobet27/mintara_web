@@ -24,7 +24,6 @@ export interface PersonaData {
   metrics: { label: string; value: string }[];
   features: string[];
   ctaText: string;
-  image?: string;
   colorClass: string;
   textColorClass: string;
 }
