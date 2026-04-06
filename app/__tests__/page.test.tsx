@@ -2,42 +2,47 @@ import { render, screen } from "@testing-library/react";
 import Home from "../page";
 
 describe("Home Page", () => {
-  it("renders the getting started heading", () => {
+  it("renders the primary landing page sections", () => {
     render(<Home />);
 
-    const heading = screen.getByRole("heading", {
-      name: /to get started, edit the page\.tsx file\./i,
-    });
+    // Advance Hero Section
+    expect(
+      screen.getByRole("heading", { name: /budgeting reimagined/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/take control of your budget with mintara/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /start planning/i }),
+    ).toBeInTheDocument();
 
-    expect(heading).toBeInTheDocument();
+    // Advance Features & Solutions
+    expect(
+      screen.getByRole("heading", { name: /modern budgeting tools/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /solutions for every stage/i }),
+    ).toBeInTheDocument();
+
+    // Global Footer
+    expect(
+      screen.getByText(/© \d{4} mintara finance inc/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/all systems operational/i)).toBeInTheDocument();
   });
 
-  it("renders the Next.js logo with priority", () => {
+  it("contains essential navigation links in the footer", () => {
     render(<Home />);
 
-    const logo = screen.getByAltText(/next\.js logo/i);
-    expect(logo).toBeInTheDocument();
-  });
+    expect(screen.getByRole("link", { name: /pricing/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /privacy policy/i }),
+    ).toBeInTheDocument();
 
-  it("contains the documentation link", () => {
-    render(<Home />);
-
-    const docLink = screen.getByRole("link", { name: /documentation/i });
-    expect(docLink).toBeInTheDocument();
-    expect(docLink).toHaveAttribute(
-      "href",
-      expect.stringContaining("nextjs.org/docs"),
-    );
-  });
-
-  it("contains the deploy now link", () => {
-    render(<Home />);
-
-    const deployLink = screen.getByRole("link", { name: /deploy now/i });
-    expect(deployLink).toBeInTheDocument();
-    expect(deployLink).toHaveAttribute(
-      "href",
-      expect.stringContaining("vercel.com/new"),
-    );
+    // Social links (aria-labels)
+    expect(screen.getByLabelText(/twitter/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/github/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/linkedin/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
   });
 });
